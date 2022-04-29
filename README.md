@@ -1,8 +1,31 @@
 ## Getting Started
 
-start : npm run start / yarn start
+### Start 
+```bash
+- npm
 
-test : npm run test / yarn test
+npm run start
+```
+
+```bash
+- yarn
+
+yarn run start
+```
+
+### Test
+
+```bash
+- npm
+
+npm run test
+```
+
+```bash
+- yarn
+
+yarn run test
+```
 
 ## Git Commit Message Convention
 
