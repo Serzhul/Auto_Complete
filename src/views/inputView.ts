@@ -1,4 +1,4 @@
-import View from './View.js';
+import View from "./View.js";
 
 const template = `<div class="bl_container">
         <form class="el_search__form">
@@ -43,13 +43,13 @@ const template = `<div class="bl_container">
 `;
 
 export default class InputView extends View {
-    constructor(containerId: string) {
-        super(containerId, template);
-    }
+  constructor(containerId: string) {
+    super(containerId, template);
+  }
 
-    render = () => {
-        this.addHtml(
-            `
+  render = async () => {
+    this.addHtml(
+      `
             <li class="el_list__item">
                             <div class="bl_container__item">
                                 <div class="selected">
@@ -81,10 +81,10 @@ export default class InputView extends View {
                             </div>
                         </li>
             `
-        );
+    );
 
-        this.setTemplateData('search_item', this.getHtml());
+    this.setTemplateData("search_item", this.getHtml());
 
-        this.updateView();
-    };
+    this.updateView();
+  };
 }
