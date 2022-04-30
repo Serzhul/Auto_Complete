@@ -2,8 +2,10 @@ import { Item, ItemStore } from "./types";
 
 export default class Store implements ItemStore {
   private items: Item[];
+  private curKeyword: string;
 
   constructor() {
+    this.curKeyword = "";
     this.items = [];
   }
 
@@ -17,5 +19,13 @@ export default class Store implements ItemStore {
 
   setAllItems(items: Item[]) {
     this.items = items;
+  }
+
+  getCurKeyword(): string {
+    return this.curKeyword;
+  }
+
+  setCurKeyword(keyword: string) {
+    this.curKeyword = keyword;
   }
 }
