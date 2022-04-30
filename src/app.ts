@@ -1,5 +1,9 @@
 import InputView from "./views/inputView.js";
-import { keyInputHandler, listMenuHandler } from "./controller.js";
+import {
+  keyInputHandler,
+  listMenuHandler,
+  focusHandler,
+} from "./controller.js";
 import Store from "./store.js";
 
 const store = new Store();
@@ -9,6 +13,7 @@ export const init = async () => {
 
   keyInputHandler(store);
   listMenuHandler(store);
+  focusHandler();
 };
 
 init();

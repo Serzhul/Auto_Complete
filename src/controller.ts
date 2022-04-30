@@ -9,6 +9,7 @@ const { getItems } = fetch;
 
 export const keyInputHandler = (store: ItemStore) => {
   const $searchInput = document.querySelector(".el_search__input");
+  const $listEl = document.querySelector(".bl_list");
 
   if ($searchInput) {
     (<HTMLElement>$searchInput).focus();
@@ -21,11 +22,17 @@ export const keyInputHandler = (store: ItemStore) => {
       debounce(async (e: InputEvent) => {
         const inputVal = (<HTMLInputElement>e.target)?.value;
 
-        if (inputVal.trim() === "") return;
+        if (inputVal.trim() === "") {
+          $listEl?.classList.add("hidden");
+          return;
+        }
+
+        $listEl?.classList.remove("hidden");
 
         const items = await getItems(inputVal);
 
         store.setAllItems(items);
+
         store.setCurKeyword(inputVal);
 
         init();
@@ -82,4 +89,18 @@ export const listMenuHandler = (store: ItemStore) => {
     }
   });
   console.log(store);
+};
+
+export const focusHandler = () => {
+  const $searchInput = document.querySelector(".el_search__input");
+  const $listEl = document.querySelector(".bl_list");
+  const inputVal = (<HTMLInputElement>$searchInput)?.value;
+
+  $searchInput?.addEventListener("focusin", () => {
+    if (inputVal.trim() !== "") $listEl?.classList.remove("hidden");
+  });
+
+  $searchInput?.addEventListener("focusout", () => {
+    $listEl?.classList.add("hidden");
+  });
 };
