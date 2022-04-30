@@ -1,106 +1,104 @@
-import { fetch, helpers } from "./utils/index.js";
-import { ItemStore } from "./types/index.js";
-import { init } from "./app.js";
+import { fetch, helpers } from './utils/index.js';
+import { ItemStore, NodeType } from './types/index.js';
+import { init } from './app.js';
 
-// const $container = document.querySelector(".bl_container");
-
-const { debounce } = helpers;
+const { debounce, selectElement, selectAllElements, removeClass, addClass } =
+    helpers;
 const { getItems } = fetch;
 
-export const keyInputHandler = (store: ItemStore) => {
-  const $searchInput = document.querySelector(".el_search__input");
-  const $listEl = document.querySelector(".bl_list");
+const moveFocus = (curIdx: number, itemList: NodeList) => {
+    [...itemList].forEach(($item, i) => {
+        const target = <HTMLElement>(
+            selectElement(<NodeType>$item, '.bl_container__item')
+                ?.firstElementChild
+        );
 
-  if ($searchInput) {
-    (<HTMLElement>$searchInput).focus();
-
-    (<HTMLInputElement>$searchInput).value = "";
-    (<HTMLInputElement>$searchInput).value = store.getCurKeyword();
-
-    $searchInput?.addEventListener(
-      "input",
-      debounce(async (e: InputEvent) => {
-        const inputVal = (<HTMLInputElement>e.target)?.value;
-
-        if (inputVal.trim() === "") {
-          $listEl?.classList.add("hidden");
-          return;
+        if (i === curIdx) {
+            removeClass(target, 'unselected');
+            addClass(target, 'selected');
+        } else {
+            removeClass(target, 'selected');
+            addClass(target, 'unselected');
         }
-
-        $listEl?.classList.remove("hidden");
-
-        const items = await getItems(inputVal);
-
-        store.setAllItems(items);
-
-        store.setCurKeyword(inputVal);
-
-        init();
-      })
-    );
-  }
+    });
 };
 
-export const listMenuHandler = (store: ItemStore) => {
-  const $searchInput = document.querySelector(".el_search__input");
-  const $itemList = document.querySelectorAll(".el_list__item");
+export const keyInputHandler = (store: ItemStore) => {
+    const $searchInput = selectElement(document, '.el_search__input');
+    const $listEl = selectElement(document, '.bl_list');
+    const $clearIcon = selectElement(document, '.el_icon__clear');
 
-  const listLen = $itemList.length;
+    if ($clearIcon) addClass($clearIcon, 'hidden');
 
-  let curIdx = 0;
+    const curKeyword = store.getCurKeyword();
 
-  $searchInput?.addEventListener("keydown", (e) => {
-    const { key } = <KeyboardEvent>e;
+    if ($searchInput) {
+        (<HTMLElement>$searchInput).focus();
 
-    if (key === "ArrowDown") {
-      curIdx += 1;
+        (<HTMLInputElement>$searchInput).value = '';
+        (<HTMLInputElement>$searchInput).value = curKeyword;
 
-      if (curIdx >= listLen) curIdx = 0;
-
-      [...$itemList].forEach(($item, i) => {
-        const target = $item.querySelector(
-          ".bl_container__item"
-        )?.firstElementChild;
-
-        if (i === curIdx) {
-          target?.classList.remove("unselected");
-          target?.classList.add("selected");
-        } else {
-          target?.classList.remove("selected");
-          target?.classList.add("unselected");
+        if (curKeyword !== '') {
+            if ($clearIcon) removeClass($clearIcon, 'hidden');
         }
-      });
-    } else if (key === "ArrowUp") {
-      curIdx -= 1;
-      if (curIdx < 0) curIdx = listLen - 1;
-      [...$itemList].forEach(($item, i) => {
-        const target = $item.querySelector(
-          ".bl_container__item"
-        )?.firstElementChild;
 
-        if (i === curIdx) {
-          target?.classList.remove("unselected");
-          target?.classList.add("selected");
-        } else {
-          target?.classList.remove("selected");
-          target?.classList.add("unselected");
-        }
-      });
+        $searchInput?.addEventListener(
+            'input',
+            debounce(async (e: InputEvent) => {
+                const inputVal = (<HTMLInputElement>e.target)?.value;
+
+                if (inputVal.trim() === '') {
+                    if ($listEl) addClass($listEl, 'hidden');
+                    store.setCurKeyword('');
+                } else {
+                    if ($listEl) removeClass($listEl, 'hidden');
+                    store.setCurKeyword(inputVal);
+                }
+
+                const items = await getItems(inputVal);
+
+                store.setAllItems(items);
+
+                init();
+            })
+        );
     }
-  });
-  console.log(store);
+};
+
+export const listMenuHandler = () => {
+    const $searchInput = selectElement(document, '.el_search__input');
+    const $itemList = selectAllElements(document, '.el_list__item');
+    const listLen = $itemList.length;
+
+    let curIdx = 0;
+
+    $searchInput?.addEventListener('keydown', (e) => {
+        const { key } = <KeyboardEvent>e;
+
+        if (key === 'ArrowDown') {
+            curIdx += 1;
+            if (curIdx >= listLen) curIdx = 0;
+            moveFocus(curIdx, $itemList);
+        } else if (key === 'ArrowUp') {
+            curIdx -= 1;
+            if (curIdx < 0) curIdx = listLen - 1;
+            moveFocus(curIdx, $itemList);
+        }
+    });
 };
 
 export const focusHandler = () => {
-  const $searchInput = document.querySelector(".el_search__input");
-  const $listEl = document.querySelector(".bl_list");
-  const inputVal = (<HTMLInputElement>$searchInput)?.value;
+    const $searchInput = selectElement(document, '.el_search__input');
+    const $listEl = selectElement(document, '.bl_list');
+    const inputVal = (<HTMLInputElement>$searchInput)?.value;
 
-  $searchInput?.addEventListener("focusin", () => {
-    if (inputVal.trim() !== "") $listEl?.classList.remove("hidden");
-  });
+    if ($listEl) {
+        $searchInput?.addEventListener('focusin', () => {
+            if (inputVal.trim() !== '') removeClass($listEl, 'hidden');
+        });
 
-  $searchInput?.addEventListener("focusout", () => {
-    $listEl?.classList.add("hidden");
-  });
+        $searchInput?.addEventListener('focusout', () => {
+            addClass($listEl, 'hidden');
+        });
+    }
 };
