@@ -1,11 +1,24 @@
+/** @type {import('ts-jest/dist/types').InitialOptionsTsJest} */
+
 module.exports = {
-  testMatch: [
-    "**/__tests__/**/*.+(ts|tsx|js)",
-    "**/?(*.)+(spec|test).+(ts|tsx|js)",
-  ],
-  transform: {
-    "^.+\\.(ts|tsx)$": "ts-jest",
-  },
-  setupFilesAfterEnv: ["<rootDir>/jest-setup.ts"],
-  testEnvironment: "jsdom",
+    preset: 'ts-jest',
+    testEnvironment: 'node',
+    extensionsToTreatAsEsm: ['.ts'],
+    globals: {
+        'ts-jest': {
+            useESM: true,
+        },
+    },
+
+    transform: {
+        '\\.[jt]sx?$': 'ts-jest',
+    },
+    globals: {
+        'ts-jest': {
+            useESM: true,
+        },
+    },
+    moduleNameMapper: {
+        '(.+)\\.js': '$1',
+    },
 };

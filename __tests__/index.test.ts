@@ -1,15 +1,25 @@
-import { screen } from "@testing-library/dom";
+import { getItems } from '../src/utils/fetch';
 
-import "@testing-library/jest-dom";
+import '@testing-library/jest-dom';
 
-describe("ui tests", () => {
-  test("uses jest-dom", () => {
-    document.body.innerHTML = `<span data-testid="not-empty"><span data-testid="empty"></span></span>
-        <span data-testid="with-whitespace"> </span>
-        <span data-testid="with-comment"><!-- comment --></span>`;
+describe('api test', () => {
+    const realFetch = global.fetch;
 
-    expect(screen.getByTestId("empty")).toBeEmptyDOMElement();
-    expect(screen.getByTestId("not-empty")).not.toBeEmptyDOMElement();
-    expect(screen.getByTestId("with-whitespace")).not.toBeEmptyDOMElement();
-  });
+    beforeAll(() => {
+        global.fetch = jest.fn();
+    });
+
+    afterAll(() => {
+        global.fetch = realFetch;
+    });
+
+    test('get items', async () => {
+        const spyGet = jest.spyOn(global, 'fetch');
+
+        await getItems('가');
+        expect(spyGet).toHaveBeenCalledTimes(1);
+        expect(spyGet).toBeCalledWith(
+            'https://5qfov74y3c.execute-api.ap-northeast-2.amazonaws.com/web-front/autocomplete?value=가'
+        );
+    });
 });

@@ -1,28 +1,28 @@
-import { ApiCache } from "./api_cache.js";
+import { ApiCache } from './api_cache.js';
 
 const apiCache = new ApiCache();
 
 export default {
-  async get(url: string) {
-    if (apiCache.recordExists(url)) {
-      return await apiCache.get(url);
-    }
-
-    try {
-      return await fetch(url).then(async (res) => {
-        if (!res.ok) {
-          throw res;
+    async get(url: string) {
+        if (apiCache.recordExists(url)) {
+            return await apiCache.get(url);
         }
 
-        const text = await res.text();
-        const json = JSON.parse(text);
+        try {
+            return await fetch(url).then(async (res) => {
+                if (!res.ok) {
+                    throw res;
+                }
 
-        apiCache.set(url, json);
+                const text = await res.text();
+                const json = JSON.parse(text);
 
-        return json;
-      });
-    } catch (e) {
-      console.error("Something went wrong");
-    }
-  },
+                apiCache.set(url, json);
+
+                return json;
+            });
+        } catch (e) {
+            console.error('Something went wrong');
+        }
+    },
 };
