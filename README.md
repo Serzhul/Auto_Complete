@@ -19,12 +19,14 @@ yarn install
 ```bash
 - npm
 
+npm run build
 npm run start
 ```
 
 ```bash
 - yarn
 
+yarn build
 yarn start
 ```
 
