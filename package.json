@@ -4,6 +4,7 @@
     "description": "AutoComplete Input Module",
     "main": "index.js",
     "scripts": {
+        "build": "tsc",
         "start": "live-server",
         "test": "jest"
     },
