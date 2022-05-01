@@ -1,5 +1,5 @@
-import View from './View.js';
-import { ItemStore } from '../types/index.js';
+import View from "./View.js";
+import { ItemStore } from "../types/index.js";
 
 const template = `<div class="bl_container">
         <form class="el_search__form">
@@ -44,33 +44,33 @@ const template = `<div class="bl_container">
 `;
 
 export default class InputView extends View {
-    private store: ItemStore;
-    constructor(containerId: string, store: ItemStore) {
-        super(containerId, template);
-        this.store = store;
-    }
+  private store: ItemStore;
+  constructor(containerId: string, store: ItemStore) {
+    super(containerId, template);
+    this.store = store;
+  }
 
-    render = () => {
-        const items = this.store.getAllItems();
+  public render = () => {
+    const items = this.store.getAllItems();
 
-        this.addHtml(
-            items
-                .map(
-                    (item, i) => `
+    this.addHtml(
+      items
+        .map(
+          (item, i) => `
             <li class="el_list__item">
             <div class="bl_container__item">
-                <div class="${i === 0 ? 'selected' : 'unselected'}">
+                <div class="${i === 0 ? "selected" : "unselected"}">
                     <span class="el_item__name"> ${item.text}</span>
                 </div>
             </div>
         </li>
         `
-                )
-                .join('')
-        );
+        )
+        .join("")
+    );
 
-        this.setTemplateData('search_item', this.getHtml());
+    this.setTemplateData("search_item", this.getHtml());
 
-        this.updateView();
-    };
+    this.updateView();
+  };
 }
